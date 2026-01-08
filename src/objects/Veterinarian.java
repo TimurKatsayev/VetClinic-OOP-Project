@@ -1,32 +1,27 @@
 package objects;
 
-public class Veterinarian {
-    private String lastName;
+public class Veterinarian extends Person {
     private String specialization;
     private int experienceYears;
-    private String phoneNumber;
     private boolean available;
 
-    public Veterinarian(String lastName, String specialization, int experienceYears, String phoneNumber, boolean available){
+    public Veterinarian(String firstName, String lastName, String phone, int age, String specialization, int experienceYears, boolean available){
+        super(firstName, lastName, phone, age);
         this.lastName = lastName;
         this.specialization = specialization;
         this.experienceYears = experienceYears;
-        this.phoneNumber = phoneNumber;
+        this.phone = phone;
         this.available = available;
     }
 
     public Veterinarian(){
-        lastName = "Unknown";
         specialization = "Unknown";
         experienceYears = 0;
-        phoneNumber = "Unknown";
+        phone = "Unknown";
         available = false;
     }
 
     //GETTERS
-    public String getLastName() {
-        return lastName;
-    }
 
     public String getSpecialization() {
         return specialization;
@@ -36,19 +31,11 @@ public class Veterinarian {
         return experienceYears;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
     public boolean isAvailable() {
         return available;
     }
 
     //SETTERS
-    public void setLastName(String lastName){
-        if (lastName == null) throw new IllegalArgumentException("lastName cannot be null");
-        this.lastName = lastName;
-    }
 
     public void setSpecialization(String specialization) {
         if (specialization == null) throw new IllegalArgumentException("specialization cannot be null");
@@ -60,25 +47,28 @@ public class Veterinarian {
         this.experienceYears = experienceYears;
     }
 
-    public void setPhoneNumber(String phoneNumber){
-        if (phoneNumber == null) throw new IllegalArgumentException("phoneNumber cannot be null");
-        this.phoneNumber = phoneNumber;
-    }
-
     public void setAvailable(boolean available) {
         if (available != true && available != false) throw new IllegalArgumentException("available cannot be null");
         this.available = available;
     }
 
-    // TO_STRING
+    @Override
+    public void work() {
+        String status = available ? "available" : "not available";
+        System.out.println(getFullName() + " is a veterinarian (" + specialization + ") and is " + status + ".");
+    }
+
+    @Override
+    public void printCard() {
+        super.printCard();
+        System.out.println("Role: Veterinarian");
+        System.out.println("Specialization: " + specialization);
+        System.out.println("Available: " + available);
+    }
+
+    @Override
     public String toString() {
-        return "objects.Pet{" +
-                ", last name ='" + lastName + '\'' +
-                ", specialization ='" + specialization + '\'' +
-                ", experience years ='" + experienceYears + '\'' +
-                ", is available ='" + available + '\'' +
-                ", phone number ='" + phoneNumber + '\'' +
-                '}';
+        return "VetPerson{" + getFullName() + ", specialization=" + specialization + ", available=" + available + "}";
     }
 
     // ADDITIONAL METHODS

@@ -21,10 +21,10 @@ public class Main {
 
         // Demo data
         petInv.add(new Pet("Jaba", "Qva", 867, 'm', 465.5f, "ill"));
-        ownerInv.add(new Owner("Timur", "katsayev", "87773003030", new ArrayList<>(List.of(
+        ownerInv.add(new Owner("Timur", "katsayev", "87773003030", 18, new ArrayList<>(List.of(
                 petInv.get(0)
         ))));
-        vetInv.add(new Veterinarian("Almas", "Legushki", 45, "none", true));
+        vetInv.add(new Veterinarian("Almas", "Legushki", "87773335678", 45, "none", 12, true));
         appointmentInv.add(new Appointment("2026-04-23", "14:52", "Bolit zivot",
                 petInv.get(0), ownerInv.get(0), vetInv.get(0)));
 
@@ -84,6 +84,9 @@ public class Main {
         System.out.print("Enter phone: ");
         String phoneNumber = scanner.nextLine();
 
+        System.out.print("Enter age: ");
+        int age = readInt("Enter your age: ");
+
         int petCount = readInt("Enter amount of pets: ");
         List<Pet> pets = new ArrayList<>();
 
@@ -112,7 +115,7 @@ public class Main {
             pets.add(pet);
         }
 
-        Owner owner = new Owner(firstName, lastName, phoneNumber, pets);
+        Owner owner = new Owner(firstName, lastName, phoneNumber, age, pets);
         ownerInv.add(owner);
 
         System.out.println("Owner added successfully!");

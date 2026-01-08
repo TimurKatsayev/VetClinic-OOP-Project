@@ -3,43 +3,21 @@ package objects;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Owner {
-    private String firstName;
-    private String lastName;
-    private String phoneNumber;
+public class Owner extends Person {
     private List<Pet> pets;
 
     // CONSTRUCTOR
-    public Owner(String firstName, String lastName, String phoneNumber, List<Pet> pets){
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.phoneNumber = phoneNumber;
+    public Owner(String firstName, String lastName, String phone, int age, List<Pet> pets){
+        super(firstName, lastName, phone, age);
         this.pets = pets;
     }
 
     //DEFAULT_CONSTRUCTOR
     public Owner() {
-        this.firstName = "Unknown";
-        this.lastName = "Unknown";
-        this.phoneNumber = "Unknown";
         this.pets = null;
     }
 
     // SETTERS
-    public void setFirstName(String firstName){
-        if (firstName == null) throw new IllegalArgumentException("firstName cannot be null");
-        this.firstName = firstName;
-    }
-
-    public void setLastName(String lastName){
-        if (lastName == null) throw new IllegalArgumentException("lastName cannot be null");
-        this.lastName = lastName;
-    }
-
-    public void setPhoneNumber(String phoneNumber){
-        if (phoneNumber == null) throw new IllegalArgumentException("phoneNumber cannot be null");
-        this.phoneNumber = phoneNumber;
-    }
 
     public void setpets(List<Pet> pets){
         if (pets == null || pets.isEmpty()) {
@@ -56,30 +34,9 @@ public class Owner {
     }
 
     //GETTERS
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
 
     public String getpets() {
         return pets.toString();
-    }
-
-    // TO_STRING
-    public String toString() {
-        return "objects.Pets{" +
-                "first name ='" + firstName + '\'' +
-                ", last name ='" + lastName + '\'' +
-                ", phone number ='" + phoneNumber + '\'' +
-                ", pets ='" + pets.toString() + '\'' +
-                '}';
     }
 
     // ADDITIONAL METHODS
@@ -87,6 +44,25 @@ public class Owner {
         if (pets != null) {
             pets.add(pet);
         }
+    }
+
+    @Override
+    public void work() {
+        System.out.println(getFullName() + " is an owner and takes care of " + pets.toArray().length + " pet(s).");
+    }
+
+    @Override
+    public void printCard() {
+        super.printCard();
+        System.out.println("Role: Owner");
+        System.out.println("Name: " + getFullName());
+        System.out.println("Phone: " + phone);
+        System.out.println("Pets count: " + pets.toArray().length);
+    }
+
+    @Override
+    public String toString() {
+        return "OwnerPerson{" + getFullName() + ", petsCount=" + getpets().length() + "}";
     }
 
     public boolean removepets(Pet pet) {

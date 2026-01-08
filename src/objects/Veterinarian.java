@@ -45,23 +45,28 @@ public class Veterinarian {
     }
 
     //SETTERS
-    public void setLastName(String lastName) {
+    public void setLastName(String lastName){
+        if (lastName == null) throw new IllegalArgumentException("lastName cannot be null");
         this.lastName = lastName;
     }
 
     public void setSpecialization(String specialization) {
+        if (specialization == null) throw new IllegalArgumentException("specialization cannot be null");
         this.specialization = specialization;
     }
 
     public void setExperienceYears(int experienceYears) {
+        if (experienceYears < 0) throw new IllegalArgumentException("experienceYears cannot be negative");
         this.experienceYears = experienceYears;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
+    public void setPhoneNumber(String phoneNumber){
+        if (phoneNumber == null) throw new IllegalArgumentException("phoneNumber cannot be null");
         this.phoneNumber = phoneNumber;
     }
 
     public void setAvailable(boolean available) {
+        if (available != true && available != false) throw new IllegalArgumentException("available cannot be null");
         this.available = available;
     }
 

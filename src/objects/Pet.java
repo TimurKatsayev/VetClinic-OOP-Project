@@ -32,26 +32,32 @@ public class Pet {
     // SETTERS
 
     public void setName(String name) {
+        if (name == null) throw new IllegalArgumentException("name cannot be null");
         this.name = name;
     }
 
     public void setType(String type) {
+        if (type == null) throw new IllegalArgumentException("type cannot be null");
         this.type = type;
     }
 
     public void setAge(int age) {
+        if (age < 0) throw new IllegalArgumentException("age cannot be negative");
         this.age = age;
     }
 
     public void setGender(char gender) {
+        if (gender != 'm' || gender != 'f') throw new IllegalArgumentException("gender can only be 'm' or 'f'");
         this.gender = gender;
     }
 
     public void setWeight(float weight) {
+        if (weight < 0) throw new IllegalArgumentException("weight cannot be negative");
         this.weight = weight;
     }
 
     public void setCurrentCondition(String currentCondition) {
+        if (currentCondition == null) throw new IllegalArgumentException("currentCondition cannot be null");
         this.currentCondition = currentCondition;
     }
 

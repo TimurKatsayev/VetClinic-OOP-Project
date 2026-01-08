@@ -1,5 +1,6 @@
 package objects;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Owner {
@@ -26,19 +27,32 @@ public class Owner {
 
     // SETTERS
     public void setFirstName(String firstName){
+        if (firstName == null) throw new IllegalArgumentException("firstName cannot be null");
         this.firstName = firstName;
     }
 
     public void setLastName(String lastName){
+        if (lastName == null) throw new IllegalArgumentException("lastName cannot be null");
         this.lastName = lastName;
     }
 
     public void setPhoneNumber(String phoneNumber){
+        if (phoneNumber == null) throw new IllegalArgumentException("phoneNumber cannot be null");
         this.phoneNumber = phoneNumber;
     }
 
     public void setpets(List<Pet> pets){
-        this.pets = pets;
+        if (pets == null || pets.isEmpty()) {
+            throw new IllegalArgumentException("Pets list cannot be null or empty");
+        }
+
+        for (Pet pet : pets) {
+            if (pet == null) {
+                throw new IllegalArgumentException("Pets list cannot contain null elements");
+            }
+        }
+
+        this.pets = new ArrayList<>(pets);
     }
 
     //GETTERS

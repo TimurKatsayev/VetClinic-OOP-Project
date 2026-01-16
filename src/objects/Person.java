@@ -3,7 +3,7 @@ package objects;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Person {
+public abstract class Person {
     protected String firstName;
     protected String lastName;
     protected String phone;
@@ -58,16 +58,10 @@ public class Person {
     }
 
     // "Action" method (polymorphic target)
-    public void work() {
-        System.out.println(getFullName() + " is a general person (no specific role).");
-    }
+    public abstract void work();
 
     // Common method used by menu view
-    public void printCard() {
-        System.out.println("Name: " + getFullName());
-        System.out.println("Phone: " + phone);
-        System.out.println("Age: " + age);
-    }
+    public abstract void printCard();
 
     @Override
     public String toString() {

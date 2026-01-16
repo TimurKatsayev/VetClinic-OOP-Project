@@ -53,7 +53,6 @@ public class Owner extends Person {
 
     @Override
     public void printCard() {
-        super.printCard();
         System.out.println("Role: Owner");
         System.out.println("Name: " + getFullName());
         System.out.println("Phone: " + phone);

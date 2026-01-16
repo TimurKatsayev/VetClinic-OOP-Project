@@ -1,6 +1,6 @@
 package objects;
 
-public class Pet {
+public class Pet implements isAnimal {
     private String name;
     private String type;
     private int age;
@@ -118,4 +118,13 @@ public class Pet {
         }
     }
 
+    @Override
+    public String getTypeOfAn(){
+        return "Type is " + type;
+    }
+
+    @Override
+    public void sleep(){
+        System.out.println("The animal slept for 30 minutes");
+    }
 }

@@ -60,7 +60,6 @@ public class Veterinarian extends Person {
 
     @Override
     public void printCard() {
-        super.printCard();
         System.out.println("Role: Veterinarian");
         System.out.println("Specialization: " + specialization);
         System.out.println("Available: " + available);

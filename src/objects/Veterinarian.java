@@ -5,8 +5,8 @@ public class Veterinarian extends Person {
     private int experienceYears;
     private boolean available;
 
-    public Veterinarian(String firstName, String lastName, String phone, int age, String specialization, int experienceYears, boolean available){
-        super(firstName, lastName, phone, age);
+    public Veterinarian(int personId, String firstName, String lastName, String phone, int age, String specialization, int experienceYears, boolean available){
+        super(personId, firstName, lastName, phone, age);
         this.lastName = lastName;
         this.specialization = specialization;
         this.experienceYears = experienceYears;

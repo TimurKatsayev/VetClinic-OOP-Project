@@ -1,330 +1,248 @@
 package menu;
 
-import java.util.ArrayList;
+import objects.*;
+import database.*;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
-import inventories.Inventory;
-import objects.Appointment;
-import objects.Owner;
-import objects.Pet;
-import objects.Veterinarian;
-
-public class vetMenu implements Menu {
-    static final Scanner scanner = new Scanner(System.in);
-
-    static Inventory<Owner> ownerInv = new Inventory<>();
-    static Inventory<Pet> petInv = new Inventory<>();
-    static Inventory<Veterinarian> vetInv = new Inventory<>();
-    static Inventory<Appointment> appointmentInv = new Inventory<>();
+/**
+ * vetMenu - Week 8
+ * FULLY DATABASE-DRIVEN
+ */
+public class vetMenu implements Menu{
+    private Scanner scanner;
+    private PetDAO petDAO;
+    private PersonDAO personDAO;
 
     public vetMenu() {
-        // Demo data
-        petInv.add(new Pet("Jaba", "Qva", 867, 'm', 465.5f, "ill"));
-        ownerInv.add(new Owner("Timur", "katsayev", "87773003030", 18, new ArrayList<>(List.of(
-                petInv.get(0)
-        ))));
-        vetInv.add(new Veterinarian("Almas", "Legushki", "87773335678", 45, "none", 12, true));
-        appointmentInv.add(new Appointment("2026-04-23", "14:52", "Bolit zivot",
-                petInv.get(0), ownerInv.get(0), vetInv.get(0)));
+        this.scanner = new Scanner(System.in);
+        this.petDAO = new PetDAO();
+        this.personDAO = new PersonDAO();
+
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║  VET MANAGEMENT SYSTEM v2.0            ║");
+        System.out.println("╚════════════════════════════════════════╝");
     }
 
-    @Override
     public void displayMenu() {
-        System.out.println("\n========================================");
-        System.out.println(" VETERINARIAN CLINIC ");
-        System.out.println("========================================");
-        System.out.println("1. Add Owner");
-        System.out.println("2. View All Owners");
-        System.out.println("3. Add Pet");
-        System.out.println("4. View All Pets");
-        System.out.println("5. Add Appointment");
-        System.out.println("6. View All Appointments");
-        System.out.println("0. Exit");
-        System.out.println("========================================");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║         MAIN MENU - Week 8            ║");
+        System.out.println("╚════════════════════════════════════════╝");
+        System.out.println("┌─ CLINIC MANAGEMENT ────────────────────┐");
+        System.out.println("│ 1. Add Pet                            │");
+        System.out.println("│ 2. Add Owner                          │");
+        System.out.println("│ 3. Add Veterinarian                   │");
+        System.out.println("│ 4. View All Pets                      │");
+        System.out.println("│ 5. View All Persons                   │");
+        System.out.println("│ 6. View Owners Only                   │");
+        System.out.println("│ 7. View Veterinarians Only            │");
+        System.out.println("│ 8. Update Person                      │");
+        System.out.println("│ 9. Delete Person                      │");
+        System.out.println("├─ SEARCH & FILTER ──────────────────────┤");
+        System.out.println("│ 10. Search Person by Name             │");
+        System.out.println("│ 11. Search by Age Range               │");
+        System.out.println("│ 12. View Experienced Vets (5+ yrs)    │");
+        System.out.println("├─ DEMO & OTHER ─────────────────────────┤");
+        System.out.println("│ 13. Polymorphism Demo                 │");
+        System.out.println("│ 0. Exit                               │");
+        System.out.println("└────────────────────────────────────────┘");
     }
 
-    @Override
-    public void run(){
+    public void run() {
         boolean running = true;
         while (running) {
             displayMenu();
-            int choice = readInt("Enter your choice: ");
+            System.out.print("\n👉 Enter your choice: ");
+            try {
+                int choice = scanner.nextInt();
+                scanner.nextLine(); // consume newline
 
-            switch (choice) {
-                case 1 -> addOwner();
-                case 2 -> viewAllOwners();
-                case 3 -> addPet();
-                case 4 -> viewAllPets();
-                case 5 -> addAppointment();
-                case 6 -> viewAllAppointments();
-                case 0 -> {
-                    System.out.println("\nGoodbye!");
-                    running = false;
+                switch (choice) {
+                    case 1: addPet(); break;
+                    case 2: addOwner(); break;
+                    case 3: addVeterinarian(); break;
+                    case 4: viewAllPets(); break;
+                    case 5: viewAllPersons(); break;
+                    case 6: viewOwners(); break;
+                    case 7: viewVeterinarians(); break;
+                    case 8: updatePerson(); break;
+                    case 9: deletePerson(); break;
+                    case 10: searchByName(); break;
+                    case 11: searchByAgeRange(); break;
+                    case 12: viewExperiencedVets(); break;
+                    case 13: demonstratePolymorphism(); break;
+                    case 0:
+                        running = false;
+                        System.out.println("\n👋 Goodbye!");
+                        break;
+                    default:
+                        System.out.println("❌ Invalid choice! 0-13.");
                 }
-                default -> System.out.println("\nInvalid choice!");
-            }
-
-            if (running) {
-                System.out.println("\nPress Enter to continue...");
+                if (choice != 0) pressEnterToContinue();
+            } catch (InputMismatchException e) {
+                System.out.println("❌ Error: Enter a valid number!");
                 scanner.nextLine();
             }
         }
-        scanner.close();
     }
 
-    // -------------------------
-    // Owner
-    // -------------------------
-    private static void addOwner() {
-        System.out.println("\n--- ADD OWNER ---");
+    // ========================================
+    // CREATE OPERATIONS
+    // ========================================
 
-        System.out.print("Enter firstName: ");
-        String firstName = scanner.nextLine();
-
-        System.out.print("Enter lastName: ");
-        String lastName = scanner.nextLine();
-
-        System.out.print("Enter phone: ");
-        String phoneNumber = scanner.nextLine();
-
-        System.out.print("Enter age: ");
-        int age = readInt("Enter your age: ");
-
-        int petCount = readInt("Enter amount of pets: ");
-        List<Pet> pets = new ArrayList<>();
-
-        for (int i = 0; i < petCount; i++) {
-            System.out.println("\nPet #" + (i + 1));
-
-            System.out.print("Enter pet name: ");
-            String petName = scanner.nextLine();
-
-            System.out.print("Enter pet type: ");
-            String petType = scanner.nextLine();
-
-            int petAge = readInt("Enter pet age: ");
-
-            char petGender = readChar("Enter pet gender (f/m): ");
-
-            float petWeight = readFloat("Enter pet weight: ");
-
-            System.out.print("Enter pet current condition: ");
-            String petCC = scanner.nextLine();
-
-            Pet pet = new Pet(petName, petType, petAge, petGender, petWeight, petCC);
-
-            // Добавляем питомца и в общий инвентарь, и к владельцу
-            petInv.add(pet);
-            pets.add(pet);
-        }
-
-        Owner owner = new Owner(firstName, lastName, phoneNumber, age, pets);
-        ownerInv.add(owner);
-
-        System.out.println("Owner added successfully!");
-    }
-
-    private static void viewAllOwners() {
-        System.out.println("\n--- ALL OWNERS ---");
-        int count = safeSizeOwners();
-
-        if (count == 0) {
-            System.out.println("No owners found.");
-            return;
-        }
-
-        for (int i = 0; i < count; i++) {
-            Owner o = ownerInv.get(i);
-            System.out.println((i + 1) + ") " + o);
-        }
-    }
-
-    // -------------------------
-    // Pet
-    // -------------------------
-    private static void addPet() {
-        System.out.println("\n--- ADD PET ---");
-
-        System.out.print("Enter pet name: ");
-        String petName = scanner.nextLine();
-
-        System.out.print("Enter pet type: ");
-        String petType = scanner.nextLine();
-
-        int petAge = readInt("Enter pet age: ");
-        char petGender = readChar("Enter pet gender (f/m): ");
-        float petWeight = readFloat("Enter pet weight: ");
-
-        System.out.print("Enter pet current condition: ");
-        String petCC = scanner.nextLine();
-
-        Pet pet = new Pet(petName, petType, petAge, petGender, petWeight, petCC);
-        petInv.add(pet);
-
-        System.out.println("Pet added successfully!");
-    }
-
-    private static void viewAllPets() {
-        System.out.println("\n--- ALL PETS ---");
-        int count = safeSizePets();
-
-        if (count == 0) {
-            System.out.println("No pets found.");
-            return;
-        }
-
-        for (int i = 0; i < count; i++) {
-            System.out.println((i + 1) + ") " + petInv.get(i));
-        }
-    }
-
-    // -------------------------
-    // Appointment
-    // -------------------------
-    private static void addAppointment() {
-        System.out.println("\n--- ADD APPOINTMENT ---");
-
-        if (safeSizePets() == 0 || safeSizeOwners() == 0 || safeSizeVets() == 0) {
-            System.out.println("Cannot create appointment. Need at least: 1 pet, 1 owner, 1 veterinarian.");
-            return;
-        }
-
-        System.out.print("Enter date (e.g. 23.04.25): ");
-        String date = scanner.nextLine();
-
-        System.out.print("Enter time (e.g. 14:52): ");
-        String time = scanner.nextLine();
-
-        System.out.print("Enter complaint/description: ");
-        String complaint = scanner.nextLine();
-
-        Pet pet = choosePet();
-        Owner owner = chooseOwner();
-        Veterinarian vet = chooseVet();
-
-        Appointment appointment = new Appointment(date, time, complaint, pet, owner, vet);
-        appointmentInv.add(appointment);
-
-        System.out.println("Appointment added successfully!");
-    }
-
-    private static void viewAllAppointments() {
-        System.out.println("\n--- ALL APPOINTMENTS ---");
-        int count = safeSizeAppointments();
-
-        if (count == 0) {
-            System.out.println("No appointments found.");
-            return;
-        }
-
-        for (int i = 0; i < count; i++) {
-            System.out.println((i + 1) + ") " + appointmentInv.get(i));
-        }
-    }
-
-    // -------------------------
-    // Choose helpers
-    // -------------------------
-    private static Pet choosePet() {
-        System.out.println("\nChoose a pet:");
-        viewAllPets();
-        int idx = readInt("Enter pet number: ") - 1;
-        idx = clampIndex(idx, safeSizePets());
-        return petInv.get(idx);
-    }
-
-    private static Owner chooseOwner() {
-        System.out.println("\nChoose an owner:");
-        viewAllOwners();
-        int idx = readInt("Enter owner number: ") - 1;
-        idx = clampIndex(idx, safeSizeOwners());
-        return ownerInv.get(idx);
-    }
-
-    private static Veterinarian chooseVet() {
-        System.out.println("\nChoose a veterinarian:");
-        viewAllVets();
-        int idx = readInt("Enter vet number: ") - 1;
-        idx = clampIndex(idx, safeSizeVets());
-        return vetInv.get(idx);
-    }
-
-    private static void viewAllVets() {
-        System.out.println("\n--- ALL VETERINARIANS ---");
-        int count = safeSizeVets();
-        if (count == 0) {
-            System.out.println("No veterinarians found.");
-            return;
-        }
-        for (int i = 0; i < count; i++) {
-            System.out.println((i + 1) + ") " + vetInv.get(i));
-        }
-    }
-
-    // -------------------------
-    // Input helpers (без падений)
-    // -------------------------
-    private static int readInt(String prompt) {
-        while (true) {
-            System.out.print(prompt);
-            String s = scanner.nextLine().trim();
-            try {
-                return Integer.parseInt(s);
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid integer. Try again.");
-            }
-        }
-    }
-
-    private static float readFloat(String prompt) {
-        while (true) {
-            System.out.print(prompt);
-            String s = scanner.nextLine().trim();
-            try {
-                return Float.parseFloat(s);
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid float. Try again.");
-            }
-        }
-    }
-
-    private static char readChar(String prompt) {
-        while (true) {
-            System.out.print(prompt);
-            String s = scanner.nextLine().trim();
-            if (!s.isEmpty()) return s.charAt(0);
-            System.out.println("Empty input. Try again.");
-        }
-    }
-
-    private static int clampIndex(int idx, int size) {
-        if (size <= 0) return 0;
-        if (idx < 0) return 0;
-        if (idx >= size) return size - 1;
-        return idx;
-    }
-
-    // -------------------------
-    // Inventory size
-    private static int safeSizeOwners() { return safeSizeGeneric(ownerInv); }
-    private static int safeSizePets() { return safeSizeGeneric(petInv); }
-    private static int safeSizeVets() { return safeSizeGeneric(vetInv); }
-    private static int safeSizeAppointments() { return safeSizeGeneric(appointmentInv); }
-
-    private static <T> int safeSizeGeneric(Inventory<T> inv) {
+    private void addPet() {
         try {
+            System.out.println("\n┌─ ADD PET ─────────────────────────────┐");
+            System.out.print("│ Enter ID: "); int id = scanner.nextInt(); scanner.nextLine();
+            System.out.print("│ Name: "); String name = scanner.nextLine();
+            System.out.print("│ Type (Dog/Cat...): "); String type = scanner.nextLine();
+            System.out.print("│ Age: "); int age = scanner.nextInt(); scanner.nextLine();
+            System.out.print("│ Gender (M/F): "); char gender = scanner.nextLine().charAt(0);
+            System.out.print("│ Weight: "); float weight = scanner.nextFloat(); scanner.nextLine();
+            System.out.print("│ Condition: "); String cond = scanner.nextLine();
 
-        } catch (Exception ignored) {}
+            petDAO.insertPet(new Pet(id, name, type, age, gender, weight, cond));
+        } catch (Exception e) { System.out.println("❌ Error: " + e.getMessage()); }
+    }
 
-        int i = 0;
-        while (true) {
-            try {
-                inv.get(i);
-                i++;
-            } catch (Exception e) {
-                return i;
-            }
+    private void addOwner() {
+        try {
+            System.out.println("\n┌─ ADD OWNER ───────────────────────────┐");
+            System.out.print("│ Enter ID: "); int id = scanner.nextInt(); scanner.nextLine();
+            System.out.print("│ First Name: "); String fName = scanner.nextLine();
+            System.out.print("│ Last Name: "); String lName = scanner.nextLine();
+            System.out.print("│ Phone: "); String phone = scanner.nextLine();
+            System.out.print("│ Age: "); int age = scanner.nextInt(); scanner.nextLine();
+            System.out.print("│ Pet Name: "); String petName = scanner.nextLine();
+
+            personDAO.insertOwner(new Owner(id, fName, lName, phone, age, petName));
+        } catch (Exception e) { System.out.println("❌ Error: " + e.getMessage()); }
+    }
+
+    private void addVeterinarian() {
+        try {
+            System.out.println("\n┌─ ADD VETERINARIAN ────────────────────┐");
+            System.out.print("│ Enter ID: "); int id = scanner.nextInt(); scanner.nextLine();
+            System.out.print("│ First Name: "); String fName = scanner.nextLine();
+            System.out.print("│ Last Name: "); String lName = scanner.nextLine();
+            System.out.print("│ Specialization: "); String spec = scanner.nextLine();
+            System.out.print("│ Experience (Years): "); int exp = scanner.nextInt(); scanner.nextLine();
+            System.out.print("│ Available (true/false): "); boolean avail = scanner.nextBoolean(); scanner.nextLine();
+
+            personDAO.insertVeterinarian(new Veterinarian(id, fName, lName, "N/A", 30, spec, exp, avail));
+        } catch (Exception e) { System.out.println("❌ Error: " + e.getMessage()); }
+    }
+
+    // ========================================
+    // READ OPERATIONS
+    // ========================================
+
+    private void viewAllPets() {
+        List<Pet> pets = petDAO.getAllPets();
+        System.out.println("\n🐾 --- REGISTERED PETS ---");
+        pets.forEach(System.out::println);
+    }
+
+    private void viewAllPersons() {
+        personDAO.displayAllPeople(); // Используем метод из DAO
+    }
+
+    private void viewOwners() {
+        List<Person> people = personDAO.getAllPeople();
+        System.out.println("\n🏠 --- OWNERS LIST ---");
+        for (Person p : people) {
+            if (p instanceof Owner) System.out.println(p);
         }
+    }
+
+    private void viewVeterinarians() {
+        List<Person> people = personDAO.getAllPeople();
+        System.out.println("\n🩺 --- VETERINARIANS LIST ---");
+        for (Person p : people) {
+            if (p instanceof Veterinarian) System.out.println(p);
+        }
+    }
+
+    // ========================================
+    // UPDATE & DELETE
+    // ========================================
+
+    private void updatePerson() {
+        System.out.print("\n👉 Enter Person ID to update: ");
+        int id = scanner.nextInt(); scanner.nextLine();
+        Person existing = personDAO.getPersonById(id);
+
+        if (existing == null) {
+            System.out.println("❌ Person not found.");
+            return;
+        }
+
+        System.out.println("│ Current: " + existing.getFullName());
+        System.out.print("│ New First Name [" + existing.getFirstName() + "]: ");
+        String name = scanner.nextLine();
+        if (!name.isEmpty()) existing.setFirstName(name);
+
+        if (existing instanceof Owner) {
+            System.out.print("│ New Pet Name: ");
+            String pet = scanner.nextLine();
+            if (!pet.isEmpty()) ((Owner) existing).setPetName(pet);
+            personDAO.updateOwner((Owner) existing);
+        } else if (existing instanceof Veterinarian) {
+            System.out.print("│ New Specialization: ");
+            String spec = scanner.nextLine();
+            if (!spec.isEmpty()) ((Veterinarian) existing).setSpecialization(spec);
+            personDAO.updateVeterinarian((Veterinarian) existing);
+        }
+    }
+
+    private void deletePerson() {
+        System.out.print("\n⚠️ Enter ID to delete: ");
+        int id = scanner.nextInt(); scanner.nextLine();
+        System.out.print("Are you sure? (yes/no): ");
+        if (scanner.nextLine().equalsIgnoreCase("yes")) {
+            personDAO.deletePerson(id);
+        }
+    }
+
+    // ========================================
+    // SEARCH
+    // ========================================
+
+    private void searchByName() {
+        System.out.print("🔍 Enter name to search: ");
+        String name = scanner.nextLine();
+        List<Person> results = personDAO.searchByName(name);
+        displaySearchResults(results, "Name: " + name);
+    }
+
+    private void searchByAgeRange() {
+        System.out.print("Min Age: "); int min = scanner.nextInt();
+        System.out.print("Max Age: "); int max = scanner.nextInt(); scanner.nextLine();
+        List<Person> results = personDAO.searchByAgeRange(min, max);
+        displaySearchResults(results, "Age between " + min + "-" + max);
+    }
+
+    private void viewExperiencedVets() {
+        List<Person> people = personDAO.getAllPeople();
+        System.out.println("\n⭐ --- EXPERIENCED VETERINARIANS (5+ Years) ---");
+        people.stream()
+                .filter(p -> p instanceof Veterinarian && ((Veterinarian)p).isExperienced())
+                .forEach(System.out::println);
+    }
+
+    private void demonstratePolymorphism() {
+        personDAO.demonstratePolymorphism();
+    }
+
+    private void displaySearchResults(List<Person> results, String criteria) {
+        System.out.println("\n🔎 Results for " + criteria + ":");
+        if (results.isEmpty()) System.out.println("📭 Nothing found.");
+        else results.forEach(p -> System.out.println("[" + (p instanceof Owner ? "Owner" : "Vet") + "] " + p));
+    }
+
+    private void pressEnterToContinue() {
+        System.out.println("\n[Press Enter to continue...]");
+        scanner.nextLine();
     }
 }

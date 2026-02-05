@@ -1,6 +1,7 @@
 package objects;
 
 public class Pet implements isAnimal {
+    private int petId;
     private String name;
     private String type;
     private int age;
@@ -9,7 +10,7 @@ public class Pet implements isAnimal {
     private String currentCondition;
 
     // CONSTRUCTOR
-    public Pet(String name, String type,  int age, char gender, float weight, String currentCondition){
+    public Pet(int petId, String name, String type,  int age, char gender, float weight, String currentCondition){
         this.name = name;
         this.type = type;
         this.age = age;
@@ -30,6 +31,12 @@ public class Pet implements isAnimal {
     }
 
     // SETTERS
+
+
+    public void setPetId(int petId) {
+        if (petId == 0) throw new IllegalArgumentException("id cannot be null");
+        this.petId = petId;
+    }
 
     public void setName(String name) {
         if (name == null) throw new IllegalArgumentException("name cannot be null");
@@ -63,6 +70,10 @@ public class Pet implements isAnimal {
 
     // GETTERS
 
+    public int getPetId() {
+        return petId;
+    }
+
     public String getName() {
         return name;
     }
@@ -91,6 +102,7 @@ public class Pet implements isAnimal {
 
     public String toString() {
         return "objects.Pet{" +
+                "id='" + petId + '\'' +
                 "name='" + name + '\'' +
                 ", type='" + type + '\'' +
                 ", age=" + age +

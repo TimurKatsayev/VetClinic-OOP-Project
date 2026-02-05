@@ -2,53 +2,50 @@ package objects;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Owner extends Person {
-    private List<Pet> pets;
+    private String petName;
 
     // CONSTRUCTOR
-    public Owner(String firstName, String lastName, String phone, int age, List<Pet> pets){
-        super(firstName, lastName, phone, age);
-        this.pets = pets;
+    public Owner(int personId, String firstName, String lastName, String phone, int age, String petName){
+        super(personId, firstName, lastName, phone, age);
+        this.petName = petName;
     }
 
     //DEFAULT_CONSTRUCTOR
     public Owner() {
-        this.pets = null;
+        this.petName = null;
     }
 
     // SETTERS
 
-    public void setpets(List<Pet> pets){
-        if (pets == null || pets.isEmpty()) {
+    public void setPetName(String petName){
+        if (petName == null) {
             throw new IllegalArgumentException("Pets list cannot be null or empty");
         }
 
-        for (Pet pet : pets) {
-            if (pet == null) {
-                throw new IllegalArgumentException("Pets list cannot contain null elements");
-            }
-        }
-
-        this.pets = new ArrayList<>(pets);
+        this.petName = petName;
     }
 
     //GETTERS
 
-    public String getpets() {
-        return pets.toString();
+    public String getPetName() {
+        return petName;
     }
 
     // ADDITIONAL METHODS
-    public void addpets(Pet pet) {
-        if (pets != null) {
-            pets.add(pet);
+    public void is_owner_of(String pet_name) {
+        if (Objects.equals(pet_name, petName)) {
+            System.out.println("Yes");
+        } else{
+            System.out.println("No");
         }
     }
 
     @Override
     public void work() {
-        System.out.println(getFullName() + " is an owner and takes care of " + pets.toArray().length + " pet(s).");
+        System.out.println(getFullName() + " is an owner and takes care of " + petName + " pet.");
     }
 
     @Override
@@ -56,16 +53,12 @@ public class Owner extends Person {
         System.out.println("Role: Owner");
         System.out.println("Name: " + getFullName());
         System.out.println("Phone: " + phone);
-        System.out.println("Pets count: " + pets.toArray().length);
+        System.out.println("Pets name: " + petName);
     }
 
     @Override
     public String toString() {
-        return "OwnerPerson{" + getFullName() + ", petsCount=" + getpets().length() + "}";
-    }
-
-    public boolean removepets(Pet pet) {
-        return pets.remove(pet);
+        return "OwnerPerson{" + getFullName() + ", pets name =" + petName + "}";
     }
 
 }

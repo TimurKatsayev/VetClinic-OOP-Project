@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Person {
+    protected int personId;
     protected String firstName;
     protected String lastName;
     protected String phone;
     protected int age;
 
-    public Person(String firstName, String lastName, String phone, int age) {
+    public Person(int personId, String firstName, String lastName, String phone, int age) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
@@ -24,6 +25,11 @@ public abstract class Person {
     }
 
     // SETTERS
+    public void setPersonIdt(int personId){
+        if (personId == 0) throw new IllegalArgumentException("firstName cannot be null");
+        this.personId = personId;
+    }
+
     public void setFirstName(String firstName){
         if (firstName == null) throw new IllegalArgumentException("firstName cannot be null");
         this.firstName = firstName;
@@ -40,6 +46,15 @@ public abstract class Person {
     }
 
     //GETTERS
+    public int getPersonId() {
+        return personId;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+
     public String getFirstName() {
         return firstName;
     }

@@ -42,9 +42,10 @@ public class vetMenu implements Menu{
         System.out.println("├─ SEARCH & FILTER ──────────────────────┤");
         System.out.println("│ 10. Search Person by Name             │");
         System.out.println("│ 11. Search by Age Range               │");
-        System.out.println("│ 12. View Experienced Vets (5+ yrs)    │");
+        System.out.println("│ 12. Search by Age Range               │");
+        System.out.println("│ 13. View Experienced Vets (5+ yrs)    │");
         System.out.println("├─ DEMO & OTHER ─────────────────────────┤");
-        System.out.println("│ 13. Polymorphism Demo                 │");
+        System.out.println("│ 14. Polymorphism Demo                 │");
         System.out.println("│ 0. Exit                               │");
         System.out.println("└────────────────────────────────────────┘");
     }
@@ -70,8 +71,9 @@ public class vetMenu implements Menu{
                     case 9: deletePerson(); break;
                     case 10: searchByName(); break;
                     case 11: searchByAgeRange(); break;
-                    case 12: viewExperiencedVets(); break;
-                    case 13: demonstratePolymorphism(); break;
+                    case 12: searchByMinimumAge(); break;
+                    case 13: viewExperiencedVets(); break;
+                    case 14: demonstratePolymorphism(); break;
                     case 0:
                         running = false;
                         System.out.println("\n👋 Goodbye!");
@@ -239,6 +241,29 @@ public class vetMenu implements Menu{
         System.out.println("\n🔎 Results for " + criteria + ":");
         if (results.isEmpty()) System.out.println("📭 Nothing found.");
         else results.forEach(p -> System.out.println("[" + (p instanceof Owner ? "Owner" : "Vet") + "] " + p));
+    }
+
+// ========================================
+    // NEW SEARCH METHOD
+    // ========================================
+
+    private void searchByMinimumAge() {
+        try {
+            System.out.println("\n🔍 --- SEARCH BY MINIMUM AGE ---");
+            System.out.print("👉 Enter minimum age: ");
+            int minAge = scanner.nextInt();
+            scanner.nextLine(); // очистка буфера
+
+            // Вызываем метод из PersonDAO (который мы обсуждали ранее)
+            List<Person> results = personDAO.searchByMinAge(minAge);
+
+            // Используем ваш существующий вспомогательный метод для вывода
+            displaySearchResults(results, "Age >= " + minAge);
+
+        } catch (InputMismatchException e) {
+            System.out.println("❌ Error: Please enter a valid number for age!");
+            scanner.nextLine(); // очистка буфера при ошибке
+        }
     }
 
     private void pressEnterToContinue() {

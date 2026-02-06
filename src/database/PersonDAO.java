@@ -230,7 +230,7 @@ public class PersonDAO {
                 // Нумерация
                 System.out.print((i + 1) + ". ");
 
-                // Определяем "Роль" для вывода в скобках, как в примере
+                // Определяем "Роль" для вывода в скобках
                 String role = "";
                 if (p instanceof Owner) {
                     role = "OWNER";
@@ -328,6 +328,47 @@ public class PersonDAO {
 
         } catch (SQLException e) {
             System.out.println("❌ Ошибка при поиске по возрасту!");
+            e.printStackTrace();
+        } finally {
+            DatabaseConnection.closeConnection(connection);
+        }
+
+        return personList;
+    }
+
+    /**
+     * Search for all people who are at least a certain age or older.
+     */
+    public List<Person> searchByMinAge(int minAge) {
+        List<Person> personList = new ArrayList<>();
+
+        // SQL query to find everyone older than or equal to minAge
+        String sql = "SELECT * FROM people WHERE age >= ? ORDER BY age ASC";
+
+        Connection connection = DatabaseConnection.getConnection();
+        if (connection == null) return personList;
+
+        try {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, minAge);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                // Utilizing your existing helper method to build the objects
+                Person person = extractPersonFromResultSet(resultSet);
+                if (person != null) {
+                    personList.add(person);
+                }
+            }
+
+            resultSet.close();
+            statement.close();
+
+            System.out.println("✅ Found " + personList.size() + " people aged " + minAge + " or older.");
+
+        } catch (SQLException e) {
+            System.out.println("❌ Error searching by minimum age!");
             e.printStackTrace();
         } finally {
             DatabaseConnection.closeConnection(connection);

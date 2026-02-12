@@ -126,7 +126,8 @@ public class PersonDAO {
         return personList;
     }
 
-    public Person getPersonById(int personId) {
+    public Person getPersonById(int personId)
+    {
         String sql = "SELECT * FROM people WHERE person_id = ?";
         Connection connection = DatabaseConnection.getConnection();
         if (connection == null) return null;
@@ -230,7 +231,7 @@ public class PersonDAO {
                 // Нумерация
                 System.out.print((i + 1) + ". ");
 
-                // Определяем "Роль" для вывода в скобках
+                // Определяем "Роль" для вывода в скобках, как в примере
                 String role = "";
                 if (p instanceof Owner) {
                     role = "OWNER";
@@ -299,10 +300,7 @@ public class PersonDAO {
 
     public List<Person> searchByAgeRange(int minAge, int maxAge) {
         List<Person> personList = new ArrayList<>();
-
-        // SQL запрос с использованием BETWEEN для поиска в диапазоне
         String sql = "SELECT * FROM people WHERE age BETWEEN ? AND ? ORDER BY age ASC";
-
         Connection connection = DatabaseConnection.getConnection();
         if (connection == null) return personList;
 
@@ -314,7 +312,6 @@ public class PersonDAO {
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
-                // Используем тот же вспомогательный метод для создания объектов
                 Person person = extractPersonFromResultSet(resultSet);
                 if (person != null) {
                     personList.add(person);
@@ -336,44 +333,27 @@ public class PersonDAO {
         return personList;
     }
 
-    /**
-     * Search for all people who are at least a certain age or older.
-     */
-    public List<Person> searchByMinAge(int minAge) {
+    public List<Person> searchByMinAge(int minAge) throws SQLException {
         List<Person> personList = new ArrayList<>();
-
-        // SQL query to find everyone older than or equal to minAge
-        String sql = "SELECT * FROM people WHERE age >= ? ORDER BY age ASC";
-
+        String sql = "SELECT * FROM people WHERE age >= ?";
         Connection connection = DatabaseConnection.getConnection();
-        if (connection == null) return personList;
+        if(connection == null) return personList;
 
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, minAge);
-
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
-                // Utilizing your existing helper method to build the objects
                 Person person = extractPersonFromResultSet(resultSet);
                 if (person != null) {
                     personList.add(person);
                 }
             }
-
-            resultSet.close();
-            statement.close();
-
-            System.out.println("✅ Found " + personList.size() + " people aged " + minAge + " or older.");
-
         } catch (SQLException e) {
-            System.out.println("❌ Error searching by minimum age!");
+            System.out.println("❌ Ошибка при поиске по минимальному возрасту!");
             e.printStackTrace();
-        } finally {
-            DatabaseConnection.closeConnection(connection);
         }
-
         return personList;
     }
 

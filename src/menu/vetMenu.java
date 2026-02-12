@@ -2,6 +2,8 @@ package menu;
 
 import objects.*;
 import database.*;
+
+import java.sql.SQLException;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -42,7 +44,7 @@ public class vetMenu implements Menu{
         System.out.println("├─ SEARCH & FILTER ──────────────────────┤");
         System.out.println("│ 10. Search Person by Name             │");
         System.out.println("│ 11. Search by Age Range               │");
-        System.out.println("│ 12. Search by Age Range               │");
+        System.out.println("│ 12. Search by Min Range               │");
         System.out.println("│ 13. View Experienced Vets (5+ yrs)    │");
         System.out.println("├─ DEMO & OTHER ─────────────────────────┤");
         System.out.println("│ 14. Polymorphism Demo                 │");
@@ -82,7 +84,7 @@ public class vetMenu implements Menu{
                         System.out.println("❌ Invalid choice! 0-13.");
                 }
                 if (choice != 0) pressEnterToContinue();
-            } catch (InputMismatchException e) {
+            } catch (InputMismatchException | SQLException e) {
                 System.out.println("❌ Error: Enter a valid number!");
                 scanner.nextLine();
             }
@@ -225,6 +227,15 @@ public class vetMenu implements Menu{
         displaySearchResults(results, "Age between " + min + "-" + max);
     }
 
+    private void searchByMinimumAge() throws SQLException {
+        System.out.println("\n🔍 --- SEARCH BY MINIMUM AGE ---");
+        System.out.print("👉 Enter minimum age: ");
+        int minAge = scanner.nextInt();
+        scanner.nextLine();
+        List<Person> results = personDAO.searchByMinAge(minAge);
+        displaySearchResults(results, "Age >= " + minAge);
+    }
+
     private void viewExperiencedVets() {
         List<Person> people = personDAO.getAllPeople();
         System.out.println("\n⭐ --- EXPERIENCED VETERINARIANS (5+ Years) ---");
@@ -233,37 +244,22 @@ public class vetMenu implements Menu{
                 .forEach(System.out::println);
     }
 
+    // ========================================
+    // Demonstrate Polymorphism
+    // ========================================
+
     private void demonstratePolymorphism() {
         personDAO.demonstratePolymorphism();
     }
+
+    // ========================================
+    // Helpers
+    // ========================================
 
     private void displaySearchResults(List<Person> results, String criteria) {
         System.out.println("\n🔎 Results for " + criteria + ":");
         if (results.isEmpty()) System.out.println("📭 Nothing found.");
         else results.forEach(p -> System.out.println("[" + (p instanceof Owner ? "Owner" : "Vet") + "] " + p));
-    }
-
-// ========================================
-    // NEW SEARCH METHOD
-    // ========================================
-
-    private void searchByMinimumAge() {
-        try {
-            System.out.println("\n🔍 --- SEARCH BY MINIMUM AGE ---");
-            System.out.print("👉 Enter minimum age: ");
-            int minAge = scanner.nextInt();
-            scanner.nextLine(); // очистка буфера
-
-            // Вызываем метод из PersonDAO (который мы обсуждали ранее)
-            List<Person> results = personDAO.searchByMinAge(minAge);
-
-            // Используем ваш существующий вспомогательный метод для вывода
-            displaySearchResults(results, "Age >= " + minAge);
-
-        } catch (InputMismatchException e) {
-            System.out.println("❌ Error: Please enter a valid number for age!");
-            scanner.nextLine(); // очистка буфера при ошибке
-        }
     }
 
     private void pressEnterToContinue() {
